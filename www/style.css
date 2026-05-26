@@ -1,0 +1,17 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+}
+
+main {
+    max-width: 720px;
+    margin: 48px auto;
+    padding: 24px;
+    background: white;
+    border: 1px solid #ddd;
+}
+
+img {
+    max-width: 160px;
+}
