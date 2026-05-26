@@ -2,6 +2,7 @@
 #include <string.h>
 #include <strings.h>
 #include <unistd.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <limits.h>
@@ -74,7 +75,7 @@ static void send_error(int fd, int code, const char *reason, int close_conn)
              "Content-Length: %lu\r\n"
              "Connection: %s\r\n"
              "\r\n",
-             code, reason, strlen(body),
+             code, reason, (unsigned long)strlen(body),
              close_conn ? "close" : "keep-alive");
 
     send_all(fd, header, strlen(header));
@@ -138,7 +139,14 @@ int handle_http_request(int client_fd, const char *root_dir)
     int close_conn;
 
     n = read(client_fd, req, sizeof(req) - 1);
-    if (n <= 0)
+
+    if (n < 0) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+            return 1;
+        return 0;
+    }
+
+    if (n == 0)
         return 0;
 
     req[n] = '\0';
