@@ -2,14 +2,46 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>MiniHTTPd</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MiniHTTPd - Johann Pasquel</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <main>
-        <h1>MiniHTTPd</h1>
-        <p>Archivo index.html dentro de www.</p>
-        <img src="/image.png" alt="Imagen de prueba">
+    <header class="site-header">
+        <div class="name">Johann Pasquel</div>
+        <div class="course">Computación Distribuida</div>
+    </header>
+
+    <main class="page">
+        <section class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">Proyecto I Bimestre</p>
+                <h1>MiniHTTPd</h1>
+                <p class="lead">
+                    Servidor HTTP/1.1.
+                </p>
+                <ul class="description">
+                    <li>Atiende solicitudes GET sobre TCP</li>
+                    <li>Utiliza epoll para manejar multiples clientes</li>
+                    <li>Entrega archivos estaticos</li>
+                </ul>
+
+                <div class="meta">
+                    <span>localhost:8080</span>
+                    <span>HTTP/1.1</span>
+                    <span>epoll</span>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <img src="/image.png" alt="Servidor HTTP">
+            </div>
+        </section>
+
+        <footer class="footer">
+            <span>MiniHTTPd</span>
+            <span>2026-A</span>
+        </footer>
     </main>
 </body>
 </html>
