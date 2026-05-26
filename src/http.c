@@ -28,11 +28,30 @@ static int send_all(int fd, const void *buf, unsigned long len)
     return 0;
 }
 
+static int header_exists(const char *req, const char *name)
+{
+    const char *p = req;
+    unsigned long name_len = strlen(name);
+
+    while ((p = strchr(p, '\n')) != NULL) {
+        p++;
+
+        while (*p == ' ' || *p == '\t' || *p == '\r')
+            p++;
+
+        if (strncasecmp(p, name, name_len) == 0)
+            return 1;
+    }
+
+    return 0;
+}
+
 static int request_wants_close(const char *req, const char *version)
 {
-    if (strstr(req, "Connection: close") != NULL ||
-        strstr(req, "connection: close") != NULL)
-        return 1;
+    if (header_exists(req, "Connection:")) {
+        if (strcasestr(req, "Connection: close") != NULL)
+            return 1;
+    }
 
     if (strcmp(version, "HTTP/1.0") == 0)
         return 1;
@@ -124,7 +143,22 @@ int handle_http_request(int client_fd, const char *root_dir)
 
     req[n] = '\0';
 
+    if (n == (int)sizeof(req) - 1 && strstr(req, "\r\n\r\n") == NULL) {
+        send_error(client_fd, 400, "Bad Request", 1);
+        return 0;
+    }
+
     if (sscanf(req, "%15s %1023s %31s", method, path, version) != 3) {
+        send_error(client_fd, 400, "Bad Request", 1);
+        return 0;
+    }
+
+    if (strcmp(version, "HTTP/1.1") != 0 && strcmp(version, "HTTP/1.0") != 0) {
+        send_error(client_fd, 400, "Bad Request", 1);
+        return 0;
+    }
+
+    if (strcmp(version, "HTTP/1.1") == 0 && !header_exists(req, "Host:")) {
         send_error(client_fd, 400, "Bad Request", 1);
         return 0;
     }
@@ -136,12 +170,12 @@ int handle_http_request(int client_fd, const char *root_dir)
         return 0;
     }
 
-    if (strcmp(version, "HTTP/1.1") != 0 && strcmp(version, "HTTP/1.0") != 0) {
+    status = resolve_file_path(root_dir, path, file_path, sizeof(file_path));
+
+    if (status == 400) {
         send_error(client_fd, 400, "Bad Request", 1);
         return 0;
     }
-
-    status = resolve_file_path(root_dir, path, file_path, sizeof(file_path));
 
     if (status == 403) {
         send_error(client_fd, 403, "Forbidden", 1);
