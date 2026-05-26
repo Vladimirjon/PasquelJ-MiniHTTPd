@@ -1,6 +1,6 @@
 # **MiniHTTPd**
 
-Servidor HTTP/1.1 basico implementado en C para Linux. El proyecto usa sockets TCP, arquitectura dirigida por eventos con epoll, entrega de archivos estaticos, validacion de rutas, tipos MIME y generacion de respuestas HTTP con codigos de estado.
+Servidor HTTP/1.1 básico implementado en C para Linux. El proyecto usa sockets TCP, arquitectura dirigida por eventos con `epoll`, entrega de archivos estáticos, validación de rutas, tipos MIME y generación de respuestas HTTP con códigos de estado.
 
 Autor: Johann Pasquel
 Asignatura: Computación Distribuida
